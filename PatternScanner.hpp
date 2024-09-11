@@ -3,6 +3,7 @@
 #include <Windows.h>
 #include <Psapi.h>
 #include <cstdint>
+#include <sstream>
 
 struct module_info_helper
 {
@@ -116,8 +117,9 @@ struct PatternScanner
 		miss:;
 		}
 
-		/*if (debugName)
-			printf("Not found %s", debugName);*/
+		std::stringstream ss;
+		ss << "Failed to find " << debugName;
+		MessageBoxA(NULL, ss.str().c_str(), "NoResourcesForWorkshop SIGNATURE FAILURE!", MB_ICONERROR | MB_OK);
 
 		return { 0 };
 	}
