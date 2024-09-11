@@ -13,12 +13,36 @@ BOOL APIENTRY DllMain( HMODULE hModule,
     if (ul_reason_for_call == DLL_PROCESS_ATTACH)
     {
         static auto this_module = hModule;
+
         main_thread = CreateThread(nullptr, 0,
             [](PVOID) -> DWORD {
 
-                std::ifstream stream("SFAE ASIL\\NoResourcesForWorkshop.ini");
-                ini::File config = ini::load(stream);
-                stream.close();
+                TCHAR path[MAX_PATH];
+                ini::File config{};
+                if (GetModuleFileName(this_module, path, MAX_PATH) != 0) {
+
+                    // Convert TCHAR path to std::string
+                    std::wstring ws(path);
+                    std::string modulePath(ws.begin(), ws.end());
+
+                    // Extract directory from module path
+                    size_t pos = modulePath.find_last_of("\\/");
+                    std::string directory = (pos != std::string::npos) ? modulePath.substr(0, pos) : "";
+
+                    // Construct the full path to the ini file
+                    std::string iniFilePath = directory + "\\NoResourcesForWorkshop.ini";
+
+                    // Open the file using std::ifstream
+                    std::ifstream file(iniFilePath);
+                    if (file.is_open()) {
+                        config = ini::load(file);
+                        file.close();
+                    }
+                    else {
+                        MessageBox(NULL, L"Failed to find NoResourcesForWorkshop.ini file.", L"NoResourcesForWorkshop FILE ERROR!", MB_ICONERROR | MB_OK);
+                        ExitThread(0);
+                    }
+                }
 
                 if (config["NoResourcesForWorkshop"]["NoResources"] == "1")
                 {
