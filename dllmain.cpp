@@ -39,7 +39,7 @@ BOOL APIENTRY DllMain( HMODULE hModule,
                     if (aob_GetResourcesTotal)
                     {
                         VirtualProtect(aob_GetResourcesTotal, 2, PAGE_EXECUTE_READWRITE, &oldProtect);
-                        *(PSHORT)aob_GetResourcesTotal = 0xC0FF;
+                        *(PSHORT)aob_GetResourcesTotal = 0xE990;
                         VirtualProtect(aob_GetResourcesTotal, 2, oldProtect, &oldProtect);
                     }
                     else
